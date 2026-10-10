@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S. AI</title>
+<style>
+:root{--cyan:#00f0ff;--bg:#050914;--panel:#0b1424;--muted:#8298b5}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#102b45,#050914 65%);color:#e8faff;font-family:system-ui,Arial;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid #00eaff35;letter-spacing:2px}
+.logo{color:var(--cyan);font-weight:800;font-size:22px}
+.status{color:#65ffb1;font-size:12px}
+main{max-width:1150px;margin:auto;padding:24px;display:grid;grid-template-columns:1.1fr 1fr;gap:20px}
+.panel{background:#0a1424d9;border:1px solid #00eaff35;border-radius:18px;padding:22px;box-shadow:0 0 28px #00eaff0b}
+h2{font-size:15px;color:var(--cyan);letter-spacing:2px;margin-top:0}
+.core{height:220px;display:grid;place-items:center}
+.orb{width:150px;height:150px;border-radius:50%;border:2px solid var(--cyan);box-shadow:0 0 25px #00f0ff80,inset 0 0 25px #00f0ff50;display:grid;place-items:center;position:relative;animation:pulse 3s infinite}
+.orb:before,.orb:after{content:"";position:absolute;inset:-14px;border:1px solid #00f0ff85;border-radius:50%;transform:scaleY(.45) rotate(30deg)}
+.orb:after{transform:scaleY(.45) rotate(-30deg)}
+.orb span{font-size:32px;color:var(--cyan);font-weight:800}
+@keyframes pulse{50%{box-shadow:0 0 42px #00f0ffb0,inset 0 0 35px #00f0ff70}}
+.clock{font-size:30px;text-align:center;font-weight:700}
+.small{text-align:center;color:var(--muted);font-size:12px}
+#chat{height:250px;overflow:auto;background:#050b16;border-radius:10px;padding:12px;margin-bottom:12px}
+.msg{padding:9px 11px;border-radius:10px;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.ai{background:#102538;border-left:2px solid var(--cyan)}
+.me{background:#20233a;border-left:2px solid #a28cff}
+.controls{display:flex;gap:8px}
+input{min-width:0;flex:1;background:#050b16;color:white;border:1px solid #25465e;padding:13px;border-radius:9px;font-size:14px}
+button{background:#082c3b;color:var(--cyan);border:1px solid #00eaff80;padding:11px 14px;border-radius:9px;font-weight:700;cursor:pointer}
+button:active{background:#11516a}
+#mic{width:100%;margin-top:10px;padding:14px}
+.shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.shortcuts button{min-height:65px;font-size:12px}
+.wide{grid-column:1/-1}
+footer{text-align:center;color:#5f7894;font-size:11px;padding:20px}
+@media(max-width:700px){main{grid-template-columns:1fr;padding:12px}.wide{grid-column:auto}header{padding:15px}.shortcuts{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="logo">J.A.R.V.I.S.</div><div class="status">● SYSTEM ONLINE</div></header>
+<main>
+<section class="panel">
+<h2>NEURAL INTERFACE</h2>
+<div class="core"><div class="orb"><span>J</span></div></div>
+<div class="clock" id="clock">--:--:--</div>
+<div class="small" id="date"></div>
+<p class="small" id="state">Ready for your command, sir.</p>
+<button id="mic">🎙 ACTIVATE VOICE</button>
+<p class="small">Voice recognition requires browser support and microphone permission.</p>
+</section>
+<section class="panel">
+<h2>AI COMMUNICATION</h2>
+<div id="chat"><div class="msg ai">Good day, sir. JARVIS interface is online. How may I assist you?</div></div>
+<form id="form" class="controls"><input id="prompt" placeholder="Ask JARVIS anything..." autocomplete="off"><button>➤</button></form>
+<p class="small">Offline demo mode · No external AI API connected</p>
+</section>
+<section class="panel wide">
+<h2>QUICK ACCESS</h2>
+<div class="shortcuts">
+<button data-action="study">📚 STUDY MODE</button>
+<button data-action="youtube">▶ YOUTUBE</button>
+<button data-action="google">🔎 SEARCH WEB</button>
+<button data-action="weather">🌦 WEATHER</button>
+<button data-action="time">🕒 TIME & DATE</button>
+<button data-action="call">📞 OPEN DIALER</button>
+</div>
+</section>
+<section class="panel wide">
+<h2>SYSTEM LOG</h2>
+<div id="log" class="small" style="text-align:left">[BOOT] Interface initialized.<br>[READY] Awaiting user input.</div>
+</section>
+</main>
+<footer>J.A.R.V.I.S. PERSONAL ASSISTANT · CYBER INTERFACE</footer>
+<script>
+const $=id=>document.getElementById(id);
+function tick(){const d=new Date();$('clock').textContent=d.toLocaleTimeString();$('date').textContent=d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+tick();setInterval(tick,1000);
+function log(s){$('log').innerHTML+=' <br>['+new Date().toLocaleTimeString()+'] '+s;}
+function say(s){$('state').textContent=s;if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang='en-IN';u.rate=1; speechSynthesis.speak(u);}}
+function add(text,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight;}
+function reply(raw){const q=raw.toLowerCase().trim();let a='';
+if(/^(hi|hello|hey|hello jarvis|hi jarvis)\b/.test(q))a='Hello, sir. JARVIS is online and ready to assist you.';
+else if(q.includes('your name'))a='I am JARVIS, your personal browser-based assistant.';
+else if(q.includes('time'))a='The current time is '+new Date().toLocaleTimeString()+'.';
+else if(q.includes('date'))a='Today is '+new Date().toLocaleDateString()+'.';
+else if(q.includes('study')||q.includes('physics')||q.includes('chemistry')||q.includes('biology'))a='Study mode ready, sir. Tell me the exact topic or question you want to study.';
+else if(q.includes('weather')){a='Opening the local weather forecast.';window.open('https://www.google.com/search?q=weather','_blank');}
+else if(q.includes('youtube')){a='Opening YouTube.';window.open('https://m.youtube.com','_blank');}
+else if(q.includes('search')){const term=q.replace(/search( for)?/,'').trim();a='Opening web search.';window.open('https://www.google.com/search?q='+encodeURIComponent(term||'web search'),'_blank');}
+else if(q.includes('call')){a='Opening the phone dialer. Select a contact and confirm the call on your device.';window.location.href='tel:';}
+else if(q.includes('who are you'))a='I am JARVIS, a browser demo. I can speak preset replies and open selected shortcuts, but I am not connected to a real AI model yet.';
+else a='I have received your request, sir. This demo is not connected to an AI service yet. Connect an AI backend to answer open-ended questions.';
+add(a,'ai');say(a);log('Assistant responded.');
+}
+$('form').addEventListener('submit',e=>{e.preventDefault();const v=$('prompt').value.trim();if(!v)return;add(v,'me');$('prompt').value='';reply(v);});
+document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.action;if(a==='study')reply('study mode');if(a==='youtube')reply('open youtube');if(a==='google')reply('search web');if(a==='weather')reply('weather');if(a==='time')reply('time');if(a==='call')reply('call');}));
+let recognition;
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SpeechRecognition){recognition=new SpeechRecognition();recognition.lang='en-IN';recognition.continuous=false;recognition.interimResults=false;recognition.onstart=()=>{$('state').textContent='Listening, sir...';};recognition.onresult=e=>{const t=e.results[0][0].transcript;$('prompt').value=t;add(t,'me');reply(t);};recognition.onerror=e=>{$('state').textContent='Voice error: '+e.error+'. Check microphone permission and browser support.';};recognition.onend=()=>{$('mic').textContent='🎙 ACTIVATE VOICE';};}
+$('mic').addEventListener('click',()=>{if(!recognition){say('Voice recognition is not supported by this browser. Try a compatible browser.');return;}try{$('mic').textContent='🎙 LISTENING...';recognition.start();}catch(e){$('state').textContent='Voice is busy. Please tap again.';}});
+</script>
+</body>
+</html>
