@@ -1,106 +1,249 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>J.A.R.V.I.S. AI</title>
+<meta name="theme-color" content="#050816">
+<title>JARVIS AI Assistant</title>
 <style>
-:root{--cyan:#00f0ff;--bg:#050914;--panel:#0b1424;--muted:#8298b5}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#102b45,#050914 65%);color:#e8faff;font-family:system-ui,Arial;min-height:100vh}
-header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid #00eaff35;letter-spacing:2px}
-.logo{color:var(--cyan);font-weight:800;font-size:22px}
-.status{color:#65ffb1;font-size:12px}
-main{max-width:1150px;margin:auto;padding:24px;display:grid;grid-template-columns:1.1fr 1fr;gap:20px}
-.panel{background:#0a1424d9;border:1px solid #00eaff35;border-radius:18px;padding:22px;box-shadow:0 0 28px #00eaff0b}
-h2{font-size:15px;color:var(--cyan);letter-spacing:2px;margin-top:0}
-.core{height:220px;display:grid;place-items:center}
-.orb{width:150px;height:150px;border-radius:50%;border:2px solid var(--cyan);box-shadow:0 0 25px #00f0ff80,inset 0 0 25px #00f0ff50;display:grid;place-items:center;position:relative;animation:pulse 3s infinite}
-.orb:before,.orb:after{content:"";position:absolute;inset:-14px;border:1px solid #00f0ff85;border-radius:50%;transform:scaleY(.45) rotate(30deg)}
-.orb:after{transform:scaleY(.45) rotate(-30deg)}
-.orb span{font-size:32px;color:var(--cyan);font-weight:800}
-@keyframes pulse{50%{box-shadow:0 0 42px #00f0ffb0,inset 0 0 35px #00f0ff70}}
-.clock{font-size:30px;text-align:center;font-weight:700}
-.small{text-align:center;color:var(--muted);font-size:12px}
-#chat{height:250px;overflow:auto;background:#050b16;border-radius:10px;padding:12px;margin-bottom:12px}
-.msg{padding:9px 11px;border-radius:10px;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
-.ai{background:#102538;border-left:2px solid var(--cyan)}
-.me{background:#20233a;border-left:2px solid #a28cff}
-.controls{display:flex;gap:8px}
-input{min-width:0;flex:1;background:#050b16;color:white;border:1px solid #25465e;padding:13px;border-radius:9px;font-size:14px}
-button{background:#082c3b;color:var(--cyan);border:1px solid #00eaff80;padding:11px 14px;border-radius:9px;font-weight:700;cursor:pointer}
-button:active{background:#11516a}
-#mic{width:100%;margin-top:10px;padding:14px}
-.shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.shortcuts button{min-height:65px;font-size:12px}
-.wide{grid-column:1/-1}
-footer{text-align:center;color:#5f7894;font-size:11px;padding:20px}
-@media(max-width:700px){main{grid-template-columns:1fr;padding:12px}.wide{grid-column:auto}header{padding:15px}.shortcuts{grid-template-columns:repeat(2,1fr)}}
+:root {
+  --bg: #050816;
+  --panel: #0d1428;
+  --border: #263554;
+  --cyan: #40eaff;
+  --text: #edf6ff;
+  --muted: #91a4c5;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, #10294a, var(--bg) 65%);
+  color: var(--text);
+  font-family: system-ui, Arial, sans-serif;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 5%;
+  border-bottom: 1px solid var(--border);
+}
+.logo { color: var(--cyan); font-weight: 900; letter-spacing: 3px; }
+.status { color: #76ffb2; font-size: 12px; }
+main { width: min(900px, 94%); margin: 25px auto; }
+.hero { text-align: center; padding: 15px 0 25px; }
+.orb {
+  width: 110px; height: 110px; margin: 10px auto 22px;
+  border: 2px solid var(--cyan); border-radius: 50%;
+  display: grid; place-items: center; font-size: 36px;
+  color: var(--cyan);
+  box-shadow: 0 0 25px #40eaff55, inset 0 0 25px #40eaff22;
+  animation: pulse 3s infinite;
+}
+@keyframes pulse {
+  50% { box-shadow: 0 0 45px #40eaff88, inset 0 0 35px #40eaff44; }
+}
+h1 { margin: 0; font-size: clamp(26px, 6vw, 42px); }
+.hero p { color: var(--muted); }
+.card {
+  background: #0b1224ed; border: 1px solid var(--border);
+  border-radius: 18px; padding: 17px; margin-bottom: 16px;
+}
+#chat {
+  height: 300px; overflow-y: auto; display: flex;
+  flex-direction: column; gap: 12px; padding: 8px 0;
+}
+.msg {
+  max-width: 90%; padding: 12px 14px; border-radius: 13px;
+  white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5;
+}
+.bot { align-self: flex-start; background: #172642; }
+.user { align-self: flex-end; background: #064e67; }
+small { color: var(--muted); }
+form { display: flex; gap: 8px; margin-top: 12px; }
+input {
+  min-width: 0; flex: 1; padding: 14px;
+  color: white; background: #060b19;
+  border: 1px solid var(--border); border-radius: 12px;
+  font-size: 16px; outline-color: var(--cyan);
+}
+button {
+  cursor: pointer; border: 1px solid #3bdae9;
+  border-radius: 12px; padding: 12px 15px;
+  color: #03111a; background: var(--cyan);
+  font-weight: 750;
+}
+button:disabled { opacity: .5; cursor: wait; }
+.tools { display: flex; gap: 9px; flex-wrap: wrap; }
+.tools button { color: var(--text); background: #121f37; }
+footer { text-align: center; padding: 25px; color: var(--muted); font-size: 12px; }
+@media(max-width: 480px) {
+  header { padding: 14px; }
+  .card { padding: 12px; }
+  #chat { height: 280px; }
+  form { flex-wrap: wrap; }
+  form input { flex-basis: 70%; }
+}
 </style>
 </head>
 <body>
-<header><div class="logo">J.A.R.V.I.S.</div><div class="status">● SYSTEM ONLINE</div></header>
+<header>
+  <div class="logo">◈ JARVIS AI</div>
+  <div class="status">● SYSTEM ONLINE</div>
+</header>
+
 <main>
-<section class="panel">
-<h2>NEURAL INTERFACE</h2>
-<div class="core"><div class="orb"><span>J</span></div></div>
-<div class="clock" id="clock">--:--:--</div>
-<div class="small" id="date"></div>
-<p class="small" id="state">Ready for your command, sir.</p>
-<button id="mic">🎙 ACTIVATE VOICE</button>
-<p class="small">Voice recognition requires browser support and microphone permission.</p>
-</section>
-<section class="panel">
-<h2>AI COMMUNICATION</h2>
-<div id="chat"><div class="msg ai">Good day, sir. JARVIS interface is online. How may I assist you?</div></div>
-<form id="form" class="controls"><input id="prompt" placeholder="Ask JARVIS anything..." autocomplete="off"><button>➤</button></form>
-<p class="small">Offline demo mode · No external AI API connected</p>
-</section>
-<section class="panel wide">
-<h2>QUICK ACCESS</h2>
-<div class="shortcuts">
-<button data-action="study">📚 STUDY MODE</button>
-<button data-action="youtube">▶ YOUTUBE</button>
-<button data-action="google">🔎 SEARCH WEB</button>
-<button data-action="weather">🌦 WEATHER</button>
-<button data-action="time">🕒 TIME & DATE</button>
-<button data-action="call">📞 OPEN DIALER</button>
-</div>
-</section>
-<section class="panel wide">
-<h2>SYSTEM LOG</h2>
-<div id="log" class="small" style="text-align:left">[BOOT] Interface initialized.<br>[READY] Awaiting user input.</div>
-</section>
+  <section class="hero">
+    <div class="orb">✦</div>
+    <h1>How can I help you?</h1>
+    <p>Your personal AI interface · Hindi & English</p>
+  </section>
+
+  <section class="card">
+    <strong>AI Conversation</strong>
+    <div id="chat" aria-live="polite">
+      <div class="msg bot">Namaste! Main Jarvis hoon. Aap mujhse Hindi ya English mein baat kar sakte hain.
+
+AI provider connect karne ke baad main aapke sawaalon ka jawab de sakunga.</div>
+    </div>
+    <form id="form">
+      <input id="prompt" placeholder="Ask Jarvis anything..." autocomplete="off" required>
+      <button id="send" type="submit">Send ➤</button>
+    </form>
+    <div class="tools" style="margin-top:12px">
+      <button type="button" id="voice">🎙 Voice input</button>
+      <button type="button" id="speak">🔊 Read replies: OFF</button>
+      <button type="button" id="clear">Clear chat</button>
+    </div>
+    <small id="status">Demo mode · AI API not connected</small>
+  </section>
+
+  <section class="card">
+    <strong>Quick actions</strong>
+    <div class="tools" style="margin-top:12px">
+      <button data-prompt="Explain artificial intelligence in simple Hindi.">Learn AI</button>
+      <button data-prompt="Help me write a professional email.">Write email</button>
+      <button data-prompt="Give me a step-by-step coding learning plan.">Learn coding</button>
+      <button data-prompt="Translate this into Hindi: Good morning, how are you?">Translate</button>
+    </div>
+  </section>
 </main>
-<footer>J.A.R.V.I.S. PERSONAL ASSISTANT · CYBER INTERFACE</footer>
+
+<footer>JARVIS AI · Personal Assistant Interface</footer>
+
 <script>
-const $=id=>document.getElementById(id);
-function tick(){const d=new Date();$('clock').textContent=d.toLocaleTimeString();$('date').textContent=d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
-tick();setInterval(tick,1000);
-function log(s){$('log').innerHTML+=' <br>['+new Date().toLocaleTimeString()+'] '+s;}
-function say(s){$('state').textContent=s;if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang='en-IN';u.rate=1; speechSynthesis.speak(u);}}
-function add(text,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight;}
-function reply(raw){const q=raw.toLowerCase().trim();let a='';
-if(/^(hi|hello|hey|hello jarvis|hi jarvis)\b/.test(q))a='Hello, sir. JARVIS is online and ready to assist you.';
-else if(q.includes('your name'))a='I am JARVIS, your personal browser-based assistant.';
-else if(q.includes('time'))a='The current time is '+new Date().toLocaleTimeString()+'.';
-else if(q.includes('date'))a='Today is '+new Date().toLocaleDateString()+'.';
-else if(q.includes('study')||q.includes('physics')||q.includes('chemistry')||q.includes('biology'))a='Study mode ready, sir. Tell me the exact topic or question you want to study.';
-else if(q.includes('weather')){a='Opening the local weather forecast.';window.open('https://www.google.com/search?q=weather','_blank');}
-else if(q.includes('youtube')){a='Opening YouTube.';window.open('https://m.youtube.com','_blank');}
-else if(q.includes('search')){const term=q.replace(/search( for)?/,'').trim();a='Opening web search.';window.open('https://www.google.com/search?q='+encodeURIComponent(term||'web search'),'_blank');}
-else if(q.includes('call')){a='Opening the phone dialer. Select a contact and confirm the call on your device.';window.location.href='tel:';}
-else if(q.includes('who are you'))a='I am JARVIS, a browser demo. I can speak preset replies and open selected shortcuts, but I am not connected to a real AI model yet.';
-else a='I have received your request, sir. This demo is not connected to an AI service yet. Connect an AI backend to answer open-ended questions.';
-add(a,'ai');say(a);log('Assistant responded.');
+const $ = id => document.getElementById(id);
+const chat = $("chat");
+let readReplies = false;
+let history = [];
+
+function addMessage(text, who) {
+  const el = document.createElement("div");
+  el.className = "msg " + who;
+  el.textContent = text;
+  chat.appendChild(el);
+  chat.scrollTop = chat.scrollHeight;
+  return el;
 }
-$('form').addEventListener('submit',e=>{e.preventDefault();const v=$('prompt').value.trim();if(!v)return;add(v,'me');$('prompt').value='';reply(v);});
-document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.action;if(a==='study')reply('study mode');if(a==='youtube')reply('open youtube');if(a==='google')reply('search web');if(a==='weather')reply('weather');if(a==='time')reply('time');if(a==='call')reply('call');}));
-let recognition;
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(SpeechRecognition){recognition=new SpeechRecognition();recognition.lang='en-IN';recognition.continuous=false;recognition.interimResults=false;recognition.onstart=()=>{$('state').textContent='Listening, sir...';};recognition.onresult=e=>{const t=e.results[0][0].transcript;$('prompt').value=t;add(t,'me');reply(t);};recognition.onerror=e=>{$('state').textContent='Voice error: '+e.error+'. Check microphone permission and browser support.';};recognition.onend=()=>{$('mic').textContent='🎙 ACTIVATE VOICE';};}
-$('mic').addEventListener('click',()=>{if(!recognition){say('Voice recognition is not supported by this browser. Try a compatible browser.');return;}try{$('mic').textContent='🎙 LISTENING...';recognition.start();}catch(e){$('state').textContent='Voice is busy. Please tap again.';}});
+
+async function askJarvis(text) {
+  addMessage(text, "user");
+  history.push({ role: "user", content: text });
+
+  const endpoint = localStorage.getItem("JARVIS_API_ENDPOINT");
+  const token = localStorage.getItem("JARVIS_API_KEY");
+
+  if (!endpoint || !token) {
+    const reply = "Jarvis interface sahi chal raha hai, lekin real AI abhi connect nahi hai. Real answers ke liye secure backend aur AI API key configure karni hogi. Apni API key public GitHub code mein mat daalna.";
+    addMessage(reply, "bot");
+    return;
+  }
+
+  const waiting = addMessage("Jarvis is thinking...", "bot");
+  $("send").disabled = true;
+  $("status").textContent = "Connecting to AI...";
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        messages: history.slice(-12),
+        message: text
+      })
+    });
+
+    if (!response.ok) throw new Error("AI server returned HTTP " + response.status);
+    const data = await response.json();
+    const reply = data.reply || data.choices?.[0]?.message?.content;
+
+    if (!reply) throw new Error("Unexpected AI response format");
+
+    waiting.textContent = reply;
+    history.push({ role: "assistant", content: reply });
+
+    if (readReplies && "speechSynthesis" in window) {
+      speechSynthesis.cancel();
+      speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
+    }
+    $("status").textContent = "AI response received";
+  } catch (error) {
+    waiting.textContent = "AI connection failed. Backend endpoint, API settings aur server logs check karein.";
+    $("status").textContent = "Connection error";
+    history.pop();
+  } finally {
+    $("send").disabled = false;
+    $("prompt").focus();
+  }
+}
+
+$("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const text = $("prompt").value.trim();
+  if (!text || $("send").disabled) return;
+  $("prompt").value = "";
+  await askJarvis(text);
+});
+
+$("voice").addEventListener("click", () => {
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Recognition) {
+    $("status").textContent = "Voice input is not supported in this browser.";
+    return;
+  }
+  const recognition = new Recognition();
+  recognition.lang = "hi-IN";
+  recognition.onresult = e => {
+    $("prompt").value = e.results[0][0].transcript;
+    $("prompt").focus();
+  };
+  recognition.onerror = () => {
+    $("status").textContent = "Voice recognition failed. Check microphone permission.";
+  };
+  recognition.start();
+});
+
+$("speak").addEventListener("click", () => {
+  readReplies = !readReplies;
+  $("speak").textContent = "🔊 Read replies: " + (readReplies ? "ON" : "OFF");
+});
+
+$("clear").addEventListener("click", () => {
+  history = [];
+  chat.replaceChildren();
+  addMessage("Chat cleared. Namaste! Main Jarvis hoon.", "bot");
+});
+
+document.querySelectorAll("[data-prompt]").forEach(button => {
+  button.addEventListener("click", () => {
+    $("prompt").value = button.dataset.prompt;
+    $("prompt").focus();
+  });
+});
 </script>
 </body>
 </html>
